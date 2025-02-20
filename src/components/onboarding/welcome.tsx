@@ -15,7 +15,7 @@ export const Welcome = ({formProps, saveButtonProps}: Props) => {
          <Row gutter={[32, 32]} style={{ marginTop: "32px"}}>
             <Col xs={24} sm={24} xl={16} style={{ height: "100%" }}>
                <Image src="https://cdn.dribbble.com/users/1418633/screenshots/5400267/hilady_dribbble_studiotale.gif" preview={false}/>
-               <Paragraph>Inaonekana ni mara yako ya kwanza kujiunga na <span style={{fontWeight: "bold", color: "purple", fontStyle: "italic"}}>Mchango App</span>. Tunaomba ujaze taarifa zako ili tuweze kukuhudumia vizuri.</Paragraph>
+               <Paragraph style={{fontSize: "18px"}}>Inaonekana ni mara yako ya kwanza kujiunga na <span style={{fontWeight: "bold", color: "#030e4f", fontStyle: "italic"}}>Mchango App</span>. Weka aarifa zako ili tuweze kukuhudumia vizuri.</Paragraph>
             </Col>
             <Col xs={24} sm={24} xl={8} style={{ height: "100%"}}>
                <Edit 
