@@ -1,9 +1,8 @@
 import {Col, Progress, Row, Space} from "antd";
 import DataCard from "../../components/card";
 import PlotsEditableTable from "../../components/editableTable";
-import {useGetIdentity, useList, useOne, useTable} from "@refinedev/core";
+import {useList, useOne} from "@refinedev/core";
 import { mkekaTextMessage } from "../../utility/mkeka-message";
-import OnboardingModalWizard from "../../components/onboarding/onboarding";
 
 export const Home = () => {  
 

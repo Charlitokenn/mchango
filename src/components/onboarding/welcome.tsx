@@ -1,6 +1,5 @@
 import { Row, Col, Image, Divider, Form, Input, InputNumber, Select, Space, theme, Typography } from "antd"
 import { countryCodes } from "../../constants"
-import { DotLottieReact } from "@lottiefiles/dotlottie-react"
 import { Edit} from "@refinedev/antd"
 
 type Props = {
@@ -9,7 +8,6 @@ type Props = {
 }
 
 const {Title, Paragraph} = Typography
-const { token } = theme.useToken();
 
 export const Welcome = ({formProps, saveButtonProps}: Props) => {
 
