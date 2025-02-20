@@ -1,12 +1,14 @@
-import { Row, Col, Form, Input, Space, DatePicker, Divider,InputNumber, Typography } from "antd";
+import { Row, Col, Form, Input, Space, DatePicker, Divider,InputNumber, Select, Typography } from "antd";
 import { banks, eventTypes, mobileNetworks } from "../../constants";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { Edit, useForm,  } from "@refinedev/antd";
-import { useGetIdentity, useList, useSelect } from "@refinedev/core";
+import { useGetIdentity, useList, useOne, useSelect } from "@refinedev/core";
+import { useState } from "react";
 
 const {Title, Paragraph} = Typography
 
 export const Events = () => {
+  const [eventName, setEventName] = useState()
   const {data: identity} = useGetIdentity();
   const userId = (identity as {id: string})?.id
 
@@ -15,25 +17,39 @@ export const Events = () => {
     action: "edit"    
   })
 
-  const {data: currentEvent } = useList({
-    resource: "events", 
-    filters: [{ field: "addedBy", operator: "eq", value: userId}],
-    liveMode: "auto",
-  })
+// Fetch event data when eventName changes
+const { data: currentEvent } = useOne({
+  resource: "events", // Replace with your Supabase table name
+  id: eventName, // Selected event ID
+  queryOptions: { enabled: !!eventName }, // Fetch only if eventName exists
+});
 
-  const { selectProps } = useSelect({
+const eventData = currentEvent?.data; // Extract event details  
+
+  const { options: events } = useSelect({
     resource: "events",
-    optionLabel: "eventType",
+    optionLabel: (item: { id: string; eventType: { label: string }; brideGroomNames: string }) => `${item.eventType.label} ya ${item.brideGroomNames}`,
     optionValue: "id",
-    filters: [{ field: "addedBy", operator: "eq", value: userId}],
+    filters: [
+      {
+        field: "addedBy",
+        operator: "eq",
+        value: userId,
+      },
+    ],
     liveMode: "auto",
+    meta: {
+      select: `id,brideGroomNames,eventType, addedBy`
+    }
   })
 
   return (
       <Form 
-        {...createEventFormProps} layout="vertical"
-        >
-          <Edit 
+        {...createEventFormProps} 
+        layout="vertical"
+       initialValues={eventData}
+      >
+          <Edit
             saveButtonProps={createEventSaveButtonProps}
             headerButtons={() => (<></>)}
             contentProps={{
@@ -43,11 +59,11 @@ export const Events = () => {
                 },
               }}
             title={false}
-            recordItemId={currentEvent?.data[0].id}
+            recordItemId={eventName}
           >
             <Row gutter={[32, 32]}>
                 <Col xs={24} sm={24} xl={12} style={{ height: "100%" }}>
-                  <Select options={}/>
+                  <Select options={events} style={{width: "100%"}} placeholder="Select Event" onChange={(value) => setEventName(value)}/>
                     <DotLottieReact
                         src="https://lottie.host/c67e2543-0335-4b71-b0bf-196493cf0c03/y8qD0UZ1QY.lottie"
                         loop
