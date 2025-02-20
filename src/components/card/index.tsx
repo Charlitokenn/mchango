@@ -12,6 +12,7 @@ const DataCard = ({ title, amount, description }: Props) => {
   return (
     <Card
       size="small"
+      style={{ width: "100%" }} // Ensure the card takes the entire width of the container
       styles={{
         header: { padding: "8px 16px" },
         body: { padding: "0 0.5rem" },
@@ -33,20 +34,26 @@ const DataCard = ({ title, amount, description }: Props) => {
     >
       <Col style={{ width: "100%", paddingTop: "0.5rem" }}>
         <Text size="lg" style={{ marginTop: "0.5rem", fontWeight: "bold" }}>
-            <CountUp end={typeof amount === "number" ? amount : parseFloat(amount)} delay={0} prefix="Tshs. "
-                     duration={3}/>
+          <CountUp
+            end={typeof amount === "number" ? amount : parseFloat(amount)}
+            delay={0}
+            prefix="Tshs. "
+            duration={3}
+          />
         </Text>
         <Row
           style={{
             display: "flex",
             justifyContent: "space-between",
             marginTop: "0.7rem",
+            width: "100%", // Ensure Row takes full width
           }}
         >
           {description}
         </Row>
       </Col>
     </Card>
+
   );
 };
 
