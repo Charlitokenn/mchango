@@ -28,10 +28,10 @@ export const resources: IResourceItem[] = [
         }
     },
     {
-        name: "profile",
-        list: "/profile",
+        name: "events",
+        list: "/events",
         meta: {
-            label: "Profile",
+            label: "Events",
             icon: <UsersIcon />
         }
     },

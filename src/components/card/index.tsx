@@ -4,7 +4,7 @@ import CountUp from "react-countup";
 
 type Props = {
   title: string;
-    amount: number | string;
+  amount: number | string;
   description: string;
 };
 
@@ -12,7 +12,6 @@ const DataCard = ({ title, amount, description }: Props) => {
   return (
     <Card
       size="small"
-      style={{ width: "100%" }} // Ensure the card takes the entire width of the container
       styles={{
         header: { padding: "8px 16px" },
         body: { padding: "0 0.5rem" },
@@ -32,7 +31,6 @@ const DataCard = ({ title, amount, description }: Props) => {
         </div>
       }
     >
-      <Col style={{ width: "100%", paddingTop: "0.5rem" }}>
         <Text size="lg" style={{ marginTop: "0.5rem", fontWeight: "bold" }}>
           <CountUp
             end={typeof amount === "number" ? amount : parseFloat(amount)}
@@ -51,9 +49,7 @@ const DataCard = ({ title, amount, description }: Props) => {
         >
           {description}
         </Row>
-      </Col>
     </Card>
-
   );
 };
 

@@ -27,7 +27,7 @@ import { supabaseClient } from "./utility";
 import { resources } from "./config/resources";
 import { Home } from "./pages/home";
 import { Messaging } from "./pages/sms";
-import { Profile } from "./pages/profile";
+import { Events } from "./pages/events";
 import { toProperCase } from "./utility/propercase";
 import { customTheme } from "./constants/custom-theme";
 import OnboardingModalWizard from "./components/onboarding/onboarding";
@@ -87,7 +87,7 @@ function App() {
                       >
                         <Route index element={<Home />}></Route>
                         <Route path="/sms" element={<Messaging />}></Route>
-                        <Route path="/profile" element={<Profile />}></Route>
+                        <Route path="/events" element={<Events />}></Route>
                         <Route path="*" element={<ErrorComponent />} />
                       </Route>
                     <Route
