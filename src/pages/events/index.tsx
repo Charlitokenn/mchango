@@ -2,11 +2,10 @@ import { Row, Col, Form, Input, Space, DatePicker, Divider,InputNumber, Select, 
 import { banks, eventTypes, mobileNetworks } from "../../constants";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { Edit, useForm,  } from "@refinedev/antd";
-import { useGetIdentity, useOne, useSelect } from "@refinedev/core";
-import { useEffect, useState } from "react";
+import { useGetIdentity, useOne, useSelect, useUpdate } from "@refinedev/core";
+import { SetStateAction, useEffect, useState } from "react";
 import { toProperCase } from "../../utility/propercase";
 import { convertToDayjs, formatDate } from "../../utility/date-formater";
-import dayjs, { Dayjs } from "dayjs";
 
 const {Title, Paragraph} = Typography
 
@@ -54,6 +53,29 @@ export const Events = () => {
       liveMode: "auto",
       meta: { select: `id, brideGroomNames, eventType, addedBy, eventDate` },
     });
+
+    const {mutate: updateProfile} = useUpdate({
+        resource: "profiles",
+        id: userId,
+    })
+
+    const handleEventChange = (selectedOption: SetStateAction<string | undefined>) => {
+        setEventName(selectedOption)
+
+        //Update the profile with the corresponding Id of the selected event
+        updateProfile({
+            values: {
+                currentEvent: selectedOption
+            },
+            successNotification: () => {           
+                return {
+                  message: `Current Event has been updated`,
+                  description: "Success",
+                  type: "success",
+                };
+            },
+        })
+    }
   
     return (
       <Form 
@@ -75,7 +97,10 @@ export const Events = () => {
           >
             <Row gutter={[32, 32]}>
                 <Col xs={24} sm={24} xl={12} style={{ height: "100%" }}>
-                  <Select options={events} style={{width: "100%"}} placeholder="Select Event" onChange={(value) => setEventName(value)}/>
+                <div style={{display: "flex"}}>
+                    <span style={{fontWeight: "bold"}}>Current Event: </span>
+                    <Select options={events} style={{width: "100%"}} placeholder="Select Event" onChange={(value) => handleEventChange(value)}/>
+                </div>
                     <DotLottieReact
                         src="https://lottie.host/c67e2543-0335-4b71-b0bf-196493cf0c03/y8qD0UZ1QY.lottie"
                         loop
@@ -109,7 +134,7 @@ export const Events = () => {
                             </Form.Item>
                         </Col>
                         <Col span={12}>
-                        //Fix Displayin the event date in the form
+                        {/* Fix Displayin the event date in the form */}
                         <Form.Item
                             name="eventsDate"
                             label="Date of The Event"

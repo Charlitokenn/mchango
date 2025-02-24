@@ -1,5 +1,5 @@
 import type { RefineThemedLayoutV2HeaderProps } from "@refinedev/antd";
-import { useGetIdentity } from "@refinedev/core";
+import { useGetIdentity, useOne } from "@refinedev/core";
 import {
   Layout as AntdLayout,
   Avatar,
@@ -26,9 +26,13 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
   const { token } = useToken();
   const { data: user } = useGetIdentity<IUser>();
   const { mode, setMode } = useContext(ColorModeContext);
+  const {data: userProfile} = useOne({
+    resource: "profiles",
+    id: user?.id
+  })
 
   const headerStyles: React.CSSProperties = {
-    backgroundColor: token.colorPrimary,//token.colorBgElevated,
+    backgroundColor: token.colorBgElevated,
     display: "flex",
     justifyContent: "flex-end",
     alignItems: "center",
@@ -52,7 +56,7 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
           defaultChecked={mode === "dark"}
         />
         <Space style={{ marginLeft: "8px" }} size="middle">
-          {user?.name && <Text strong>{user.name}</Text>}
+          {userProfile?.data.firstName && <Text strong>{userProfile?.data.firstName} {userProfile?.data.lastName}</Text>}
           {user?.avatar && <Avatar src={user?.avatar} alt={user?.name} />}
         </Space>
       </Space>

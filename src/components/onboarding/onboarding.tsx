@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { Button, message, Modal, Steps, theme } from 'antd';
+import { Button, Modal, Steps, theme } from 'antd';
 import { useGetIdentity, useOne, useUpdate } from '@refinedev/core';
 import { Welcome } from './welcome';
 import { EventForm } from './event-form';
-import { useForm, useModalForm } from '@refinedev/antd';
-import { supabaseClient } from '../../utility/supabaseClient';
+import { useForm } from '@refinedev/antd';
 
 const OnboardingModalWizard: React.FC = () => {
   const {data: identity} = useGetIdentity();
@@ -25,26 +24,24 @@ const OnboardingModalWizard: React.FC = () => {
 
   const { formProps: createEventFormProps, saveButtonProps: createEventSaveButtonProps } = useForm({
     resource: "events",
-    action: "create"
+    action: "create",
+    onMutationSuccess: (data) => {
+      if (data.data.id) {
+        updateProfile({
+          values: {
+            onBoarding: "true",
+            currentEvent: data?.data.id
+          }
+        })
+      }
+    }
   })
+
 
   const {mutate: updateProfile} = useUpdate({
     resource: "profiles",
     id: userId,
-    values: {
-      onBoarding: "true"
-    }
   })
-
-  const updateEventInAuth = async (eventId: string) =>{
-    const { data, error } = await supabaseClient.auth.updateUser({
-      data: { currentEvent: eventId }
-    })
-    if (error) {
-      console.error('Error updating eventId:', error);
-      return;
-    }
-  }  
 
   const { token } = theme.useToken();
   const [current, setCurrent] = useState(0);
@@ -110,25 +107,9 @@ const OnboardingModalWizard: React.FC = () => {
                 )}
                 {current === steps.length - 1 && (
                 <Button type="primary" 
-                  {...createEventSaveButtonProps}
-                  onClick={async (e) => {
-                    try {
-                      // Manually trigger form validation
-                      await createEventSaveButtonProps.form?.validateFields();
-                      
-                      // Call the original save function
-                      if (createEventSaveButtonProps.onClick) {
-                        await createEventSaveButtonProps.onClick(e);
-                      }
-                
-                      // Proceed to the next step only if validation & saving succeed
-                      updateProfile();
-                    } catch (error) {
-                      console.error("Validation failed:", error);
-                    }
-                  }}                  
+                  {...createEventSaveButtonProps}                
                 >
-                    Complete Onboarding
+                  Complete Onboarding
                 </Button>
                 )}
             </div>

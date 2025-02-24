@@ -13,8 +13,8 @@ const DataCard = ({ title, amount, description }: Props) => {
     <Card
       size="small"
       styles={{
-        header: { padding: "8px 16px" },
-        body: { padding: "0 0.5rem" },
+        header: { padding: "8px" },
+        body: { padding: "0 1rem" },
       }}
       title={
         <div

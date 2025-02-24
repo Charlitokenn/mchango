@@ -25,3 +25,6 @@ _.njsproj
 _.sln
 \*.sw?
 node_modules
+
+# Sentry Config File
+.env.sentry-build-plugin

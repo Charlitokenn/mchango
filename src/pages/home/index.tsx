@@ -45,7 +45,6 @@ export const Home = () => {
     },
   })
 
-
   const currentEventId = currentEvent?.data[0].currentEvent
 
   const {data: currentEventData} = useOne({
@@ -115,53 +114,64 @@ export const Home = () => {
     <div>
       <Row gutter={[32, 32]} style={{marginBottom: "2rem"}}>
         <Col xs={24} sm={24} xl={12}>
-          <Space direction="vertical" style={{display: "flex" }}>
-            <Space style={{ display: "flex", width: "100%", justifyContent: "space-between"}}>
-              <DataCard
-                title="Bajeti"
-                description="Kiasi cha bajeti"
-                amount={currentEventBudgetAmount}
-              />
-              <DataCard
-                title="Pungufu ya Bajeti"
-                description="Kiasi kilichobakia kufikia bajeti"
-                amount={budgetShortFall}
-              />      
-            </Space>
+          <Space direction="vertical" style={{ display: "flex", width: "100%" }}>
+            <Row gutter={16} style={{ width: "100%" }}>
+              <Col span={12}>
+                <DataCard
+                  title="Bajeti"
+                  description="Kiasi cha bajeti"
+                  amount={currentEventBudgetAmount}
+                />
+              </Col>
+              <Col span={12}>
+                <DataCard
+                  title="Pungufu ya Bajeti"
+                  description="Kiasi cha kufikia bajeti"
+                  amount={budgetShortFall}
+                />
+              </Col>
+            </Row>
             <Progress 
-                percent={Number((totalCollections / currentEventBudgetAmount * 100).toFixed(0))}
-                percentPosition={{ align: 'end', type: 'outer' }}
-                format={(percent) => (
-                  <Space direction="horizontal">
-                    <div >{percent}%</div>
-                    <span style={{fontSize: "small"}}>To Budget</span>
-                  </Space>
-                )}
-            /> 
+              percent={Number((totalCollections / currentEventBudgetAmount * 100).toFixed(0))}
+              percentPosition={{ align: 'end', type: 'outer' }}
+              format={(percent) => (
+                <Space direction="horizontal">
+                  <div>{percent}%</div>
+                  <span style={{ fontSize: "small" }}>To Budget</span>
+                </Space>
+              )}
+              style={{ paddingRight: "1rem" }}
+            />
           </Space>
         </Col>
+
         <Col xs={24} sm={24} xl={12}>
-          <Space direction="vertical" style={{display: "flex"}}>
-            <Space direction="horizontal" style={{ display: "flex", width: "100%", justifyContent: "space-between"}}>
-              <DataCard
+          <Space direction="vertical" style={{ display: "flex", width: "100%" }}>
+            <Row gutter={16} style={{ width: "100%" }}>
+              <Col span={12}>
+                <DataCard
                   title="Ahadi"
                   description="Jumla ya Ahadi"
                   amount={totalPledges}
-              />
-              <DataCard
+                />
+              </Col>
+              <Col span={12}>
+                <DataCard
                   title="Ahadi Zilizolipwa"
                   description="Jumla ya Ahadi Zilizolipwa"
                   amount={totalCollections}
-              />
-            </Space>
+                />
+              </Col>
+            </Row>
             <Progress 
               percent={Number((totalCollections / totalPledges * 100).toFixed(0))}
               format={(percent) => (
                 <Space direction="horizontal">
-                  <div >{percent}%</div>
-                  <span style={{fontSize: "small"}}>Collected Pledges</span>
+                  <div>{percent}%</div>
+                  <span style={{ fontSize: "small" }}>Collected Pledges</span>
                 </Space>
               )}
+              style={{ paddingRight: "1rem" }}
             />            
           </Space>
         </Col>
