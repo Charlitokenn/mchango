@@ -1,5 +1,5 @@
 import { IResourceItem } from "@refinedev/core";
-import { AltHome, SMSIcon, UsersIcon } from "../components/icons";
+import { AltHome, AnalyticsIcon, SMSIcon, UsersIcon } from "../components/icons";
 
 export const resources: IResourceItem[] = [
     /**
@@ -27,6 +27,14 @@ export const resources: IResourceItem[] = [
             icon: <SMSIcon/>
         }
     },
+    {
+        name: "reports",
+        list: "/delivery-reports",
+        meta: {
+            label: "Delivery Reports",
+            icon: <AnalyticsIcon/>
+        }
+    },    
     {
         name: "events",
         list: "/events",
