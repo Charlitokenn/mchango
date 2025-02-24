@@ -82,7 +82,7 @@ export const Home = () => {
     ]
   });
 
-  const {data: mkeka} = useList({
+  const {data: mkeka, refetch: refetchMkeka} = useList({
     resource: "mkeka",
     liveMode: "auto",
     meta: {
@@ -182,6 +182,7 @@ export const Home = () => {
         messageHeader={messageHeader}
         refetchCollectionSummary={refetchCollectionSummary}
         refetchPledgeSummary={refetchPledgeSummary}
+        refetchWAMkekaSummary={refetchMkeka}
       />
       {/* <Row gutter={[32, 32]} style={{ marginTop: "32px" }}>
         <Col xs={24} sm={24} xl={24} style={{ height: "100%" }}></Col>

@@ -1,16 +1,18 @@
 import React, {useState} from 'react';
 import {Button, Form, Input, Modal, Space, Statistic, Typography} from 'antd';
-import {SendIcon} from "./icons";
-import {sendDummySMS} from "../utility/send-sms";
+import {SendIcon} from "../icons";
+import {sendDummySMS} from "../../utility/send-sms";
 import {useNotification} from "@refinedev/core";
-import {messageStats} from "../utility/message-stats";
-import {supabaseClient} from "../utility";
+import {messageStats} from "../../utility/message-stats";
+import {supabaseClient} from "../../utility";
 import {DotLottieReact} from "@lottiefiles/dotlottie-react";
-import {MessageIcon} from "../components/icons";
+import {MessageIcon} from "../icons";
 import {AlertOutlined, HighlightOutlined} from "@ant-design/icons";
-import {createMessagePayload} from "../utility/message-payload";
-import { messageTemplates } from '../constants';
+import {createMessagePayload} from "../../utility/message-payload";
+import { messageTemplates } from '../../constants';
 import MessageChat from './message-chat';
+import ReactMarkdown from 'react-markdown';
+import MessagePricing from './purchase-sms';
 
 const {TextArea} = Input
 const {Text, Paragraph} = Typography
@@ -32,6 +34,7 @@ export const SMSBox = ({balance, userId, stateCheck, selectedPledgers, events}: 
     const [confirmModalLoading, setConfirmModalLoading] = useState(false);
     const [messageCount, setMessageCount] = useState<number>(0)
     const [messageBalance, setMessageBalance] = useState<number>(0)
+    const [showPurchaseInfo, setShowPurchaseInfo] = useState(false)
 
     const messagePayload = createMessagePayload(selectedPledgers, events);
     const previewMessage = messagePayload[0]?.message
@@ -183,14 +186,24 @@ export const SMSBox = ({balance, userId, stateCheck, selectedPledgers, events}: 
                 footer={[
                     <Button
                         key="link"
+                        type="default"
+                        onClick={() => {
+                            setShowPurchaseInfo(false)
+                        }}
+                        hidden={showPurchaseInfo === true ? false : true}
+                    >
+                        Back
+                    </Button>,                     
+                    <Button
+                        key="link"
                         type="primary"
                         onClick={() => {
-                            ""
+                            setShowPurchaseInfo(true)
                         }}
-                        hidden={messageCount < balance}
+                        hidden={messageCount < balance && showPurchaseInfo === false ? true : false}
                     >
                         Purchase More SMS
-                    </Button>,
+                    </Button>,                   
                     <Button
                         key="submit"
                         type="primary"
@@ -201,17 +214,35 @@ export const SMSBox = ({balance, userId, stateCheck, selectedPledgers, events}: 
                         {confirmModalLoading ? 'Sending SMS' : 'Confirm Send'}
                     </Button>,
                 ]}
+                width={{
+                    xs: '90%',
+                    sm: '80%',
+                    md: '70%',
+                    lg: '60%',
+                    xl: '50%',
+                    xxl: '40%',
+                  }}               
             >
-                <Statistic title={`You are about to send`} value={messageCount} prefix={<MessageIcon/>}
-                           suffix={messageCount === 1 ? "Message" : " Messages"}/>
-                <Text style={{fontSize: "small", color: "orangered", fontStyle: "italic"}}
-                      hidden={messageCount < balance}><AlertOutlined style={{color: "orangered"}}/> Insufficient SMS
-                    Balance to send more messages</Text>
-                <DotLottieReact
-                    src="https://lottie.host/c1bef571-8c0e-43e5-9afc-376eef6b5535/MmbtZYxEUu.lottie"
-                    loop
-                    autoplay
-                />
+                <div hidden={showPurchaseInfo}>
+                    <Statistic 
+                        title={`You are about to send`} 
+                        value={messageCount} 
+                        prefix={<MessageIcon/>} 
+                        suffix={messageCount === 1 ? "Message" : " Messages"}
+                    />
+                    <Text 
+                        style={{fontSize: "small", color: "orangered", fontStyle: "italic"}}
+                        hidden={messageCount < balance}><AlertOutlined style={{color: "orangered"}}/> Insufficient SMS
+                        Balance to send more messages</Text>
+                    <DotLottieReact
+                        src="https://lottie.host/c1bef571-8c0e-43e5-9afc-376eef6b5535/MmbtZYxEUu.lottie"
+                        loop
+                        autoplay
+                    />
+                </div>
+                <div hidden={!showPurchaseInfo}>
+                    <MessagePricing/>
+                </div>
             </Modal>
         </>
     );

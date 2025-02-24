@@ -1,6 +1,5 @@
 import {
   DeleteButton,
-  useForm,
   useModalForm} from "@refinedev/antd";
 import {
   List,
@@ -28,8 +27,7 @@ import { currencyNumber } from "../utility/currency-numbers";
 import { Text } from "./text";
 import { useState } from "react";
 import { countryCodes } from "../constants";
-import { useCreate, useDelete, useList, useSelect } from "@refinedev/core";
-import { toProperCase } from "../utility/propercase";
+import { useList, useSelect } from "@refinedev/core";
 import { MkekaModal } from "./mkeka-modal";
 
 interface PlotsEditableTableProps {
@@ -38,6 +36,7 @@ interface PlotsEditableTableProps {
   messageHeader: any
   refetchCollectionSummary: () => void
   refetchPledgeSummary: () => void
+  refetchWAMkekaSummary: () => void
 }
 
 const PlotsEditableTable = ({
@@ -46,7 +45,8 @@ const PlotsEditableTable = ({
   mkekaMessage,
   messageHeader,
   refetchCollectionSummary,
-  refetchPledgeSummary
+  refetchPledgeSummary,
+  refetchWAMkekaSummary
 }: React.PropsWithChildren<PlotsEditableTableProps>) => {
 
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -64,7 +64,8 @@ const PlotsEditableTable = ({
     onMutationSuccess: () => {
       refetchPledgeSummary();
       refetchCollectionSummary();
-      refetchMkeka();
+      refetchWAMkekaSummary();
+      refetchMkeka()
   }
   });
 
@@ -79,7 +80,8 @@ const PlotsEditableTable = ({
     onMutationSuccess: () => {
       refetchPledgeSummary();
       refetchCollectionSummary();
-      refetchMkeka();
+      refetchWAMkekaSummary();
+      refetchMkeka()
   }
   });  
 
@@ -94,7 +96,8 @@ const PlotsEditableTable = ({
     onMutationSuccess: () => {
       refetchPledgeSummary();
       refetchCollectionSummary();
-      refetchMkeka();
+      refetchWAMkekaSummary();
+      refetchMkeka()
   }
   });
 
@@ -107,14 +110,8 @@ const PlotsEditableTable = ({
   };  
 
   const items: MenuProps["items"] = [
-    // {
-    //   key: "1",
-    //   label: (
-    //     <Button type="link" color="default" variant="link">Ongeza Mkeka</Button>
-    //   ),
-    // },
     {
-      key: "2",
+      key: "1",
       label: (
         <Button type="link" color="default" variant="link" onClick={showShareMkekaModal}>Share Mkeka</Button>
       ),
@@ -216,6 +213,7 @@ const PlotsEditableTable = ({
             onSuccess={() => {
               refetchCollectionSummary()
               refetchPledgeSummary()
+              refetchWAMkekaSummary()
               refetchMkeka()
             }}
           />

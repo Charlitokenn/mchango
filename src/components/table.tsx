@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {Button, Col, Row, Table, TableColumnsType} from 'antd';
 import {useList} from "@refinedev/core";
 import {currencyNumber} from "../utility/currency-numbers";
-import {SMSBox} from "./sms-send-box";
+import {SMSBox} from "./sms/sms-send-box";
 
 //TO DO
 // Fix table row selection via the state variables

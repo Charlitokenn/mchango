@@ -266,3 +266,49 @@ export const banks = [
     icon: ""
   }
 ];
+
+
+export const smsPackages = [
+  {
+    key: '1',
+    package: 'Starter Pack',
+    price: 'Tshs. 35,000',
+    smsCount: '500',
+    expiry: 'No Expiry',
+  },
+  {
+    key: '2',
+    package: 'Basic Pack',
+    price: 'Tshs. 65,000',
+    smsCount: '1,000',
+    expiry: 'No Expiry',
+  },
+  {
+    key: '3',
+    package: 'Standard Pack',
+    price: 'Tshs. 90,000',
+    smsCount: '1,500',
+    expiry: 'No Expiry',
+  },
+  {
+    key: '4',
+    package: 'Plus Pack',
+    price: 'Tshs. 110,000',
+    smsCount: '2,000',
+    expiry: 'No Expiry',
+  },
+  {
+    key: '5',
+    package: 'Solid Pack',
+    price: 'Tshs. 150,000',
+    smsCount: '3,000',
+    expiry: 'No Expiry',
+  },
+  {
+    key: '6',
+    package: 'Premium Pack',
+    price: 'Tshs. 180,000',
+    smsCount: '4,000',
+    expiry: 'No Expiry',
+  },
+];
