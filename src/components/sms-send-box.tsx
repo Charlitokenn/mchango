@@ -10,6 +10,7 @@ import {MessageIcon} from "../components/icons";
 import {AlertOutlined, HighlightOutlined} from "@ant-design/icons";
 import {createMessagePayload} from "../utility/message-payload";
 import { messageTemplates } from '../constants';
+import MessageChat from './message-chat';
 
 const {TextArea} = Input
 const {Text, Paragraph} = Typography
@@ -135,7 +136,8 @@ export const SMSBox = ({balance, userId, stateCheck, selectedPledgers, events}: 
             onFinish={showModal}
         >
             <Form.Item label="">
-                <Paragraph 
+                <MessageChat sms={previewMessage} state={stateCheck}/>
+                {/* <Paragraph 
                     // editable={{
                     //     icon: <HighlightOutlined />,
                     //     autoSize: true,
@@ -144,7 +146,7 @@ export const SMSBox = ({balance, userId, stateCheck, selectedPledgers, events}: 
                 >
                     <blockquote>Message Preview</blockquote>
                     <pre hidden={stateCheck ? true : false}>{previewMessage}</pre>
-                </Paragraph>
+                </Paragraph> */}                
             </Form.Item>
             <Form.Item name="message-input" hidden>
                 <TextArea

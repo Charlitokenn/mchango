@@ -2,55 +2,67 @@ import { Row, Col, Form, Input, Space, DatePicker, Divider,InputNumber, Select, 
 import { banks, eventTypes, mobileNetworks } from "../../constants";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { Edit, useForm,  } from "@refinedev/antd";
-import { useGetIdentity, useList, useOne, useSelect } from "@refinedev/core";
-import { useState } from "react";
+import { useGetIdentity, useOne, useSelect } from "@refinedev/core";
+import { useEffect, useState } from "react";
+import { toProperCase } from "../../utility/propercase";
+import { convertToDayjs, formatDate } from "../../utility/date-formater";
+import dayjs, { Dayjs } from "dayjs";
 
 const {Title, Paragraph} = Typography
 
 export const Events = () => {
-  const [eventName, setEventName] = useState()
-  const {data: identity} = useGetIdentity();
-  const userId = (identity as {id: string})?.id
-
-  const { formProps: createEventFormProps, saveButtonProps: createEventSaveButtonProps, id: eventId } = useForm({
-    resource: "events",
-    action: "edit"    
-  })
-
-// Fetch event data when eventName changes
-const { data: currentEvent } = useOne({
-  resource: "events", // Replace with your Supabase table name
-  id: eventName, // Selected event ID
-  queryOptions: { enabled: !!eventName }, // Fetch only if eventName exists
-});
-
-const eventData = currentEvent?.data; // Extract event details  
-
-  const { options: events } = useSelect({
-    resource: "events",
-    optionLabel: (item: { id: string; eventType: { label: string }; brideGroomNames: string }) => `${item.eventType.label} ya ${item.brideGroomNames}`,
-    optionValue: "id",
-    filters: [
-      {
-        field: "addedBy",
-        operator: "eq",
-        value: userId,
+    const [eventName, setEventName] = useState<string | undefined>(undefined);
+    const { data: identity } = useGetIdentity();
+    const userId = (identity as { id: string })?.id;
+  
+    // Fetch user's current event
+    const { data: currentEventDetails } = useOne({
+      resource: "profiles",
+      id: userId,
+      meta: {
+        select: `events!profiles_currentEvent_fkey(*)`,
       },
-    ],
-    liveMode: "auto",
-    meta: {
-      select: `id,brideGroomNames,eventType, addedBy`
-    }
-  })
-
-  return (
+    });
+  
+    // Set eventName when data is available
+    useEffect(() => {
+      const eventId = currentEventDetails?.data?.events?.id;
+      if (eventId && !eventName) {
+        setEventName(eventId);
+      }
+    }, [currentEventDetails?.data?.events, eventName]);
+    
+    // Ensure useForm is only used when eventName is available
+    const { formProps, saveButtonProps } = useForm({
+      resource: "events",
+      action: "edit",
+      id: eventName, // This will be `undefined` initially, so `useForm` won't fetch data until it's set
+      queryOptions: { enabled: !!eventName }, // Prevents execution when eventName is undefined
+    });
+  
+    // Fetch all events added by the user
+    const { options: events } = useSelect<{
+      id: string;
+      eventType: string;
+      brideGroomNames: string;
+      eventDate: Date;
+    }>({
+      resource: "events",
+      optionLabel: (item) => `${toProperCase(item.eventType)} ya ${item.brideGroomNames} - ${formatDate(item.eventDate)}`,
+      optionValue: "id",
+      filters: [{ field: "addedBy", operator: "eq", value: userId }],
+      liveMode: "auto",
+      meta: { select: `id, brideGroomNames, eventType, addedBy, eventDate` },
+    });
+  
+    return (
       <Form 
-        {...createEventFormProps} 
+        key={eventName} 
+        {...formProps} 
         layout="vertical"
-       initialValues={eventData}
-      >
+        >
           <Edit
-            saveButtonProps={createEventSaveButtonProps}
+            saveButtonProps={saveButtonProps}
             headerButtons={() => (<></>)}
             contentProps={{
                 style: {
@@ -97,12 +109,17 @@ const eventData = currentEvent?.data; // Extract event details
                             </Form.Item>
                         </Col>
                         <Col span={12}>
+                        //Fix Displayin the event date in the form
                         <Form.Item
-                            name="eventDate"
+                            name="eventsDate"
                             label="Date of The Event"
-                            rules={[{ required: true, message: "Tafadhali weka jina" }]}
+                            rules={[{ required: false, message: "Tafadhali chagua tarehe" }]}
                             >
-                            <DatePicker format={"MMMM DD, YYYY"} style={{ width: "100%" }} />
+                            <DatePicker 
+                                format={"MMMM DD, YYYY"} 
+                                style={{ width: "100%" }}
+                                value={convertToDayjs(currentEventDetails?.data?.events?.eventDate)}
+                            />
                             </Form.Item>
                         </Col>
                     </Row>          
@@ -224,11 +241,6 @@ const eventData = currentEvent?.data; // Extract event details
             </Row>
           </Edit>
       </Form>
-
-      // <Row gutter={[32, 32]} style={{ marginTop: "32px" }}>
-      //   <Col xs={24} sm={24} xl={12} style={{ height: "100%" }}>
-
-      //   </Col>
-      // </Row> 
-  );
-}
+    );
+  };
+  

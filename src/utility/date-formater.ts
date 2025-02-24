@@ -1,11 +1,23 @@
-export const formatDate = (dateString: Date) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-GB', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
+import dayjs from "dayjs";
+
+export const formatDate = (dateString?: string | Date) => {
+    if (!dateString) return ""; // Handle undefined/null cases
+
+    const date = dateString instanceof Date ? dateString : new Date(dateString);
+    
+    if (isNaN(date.getTime())) return ""; // Handle invalid date cases
+
+    return date.toLocaleDateString("en-GB", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
     });
-}
+};
+
+export const convertToDayjs = (dateString: string | undefined) => {
+    return dateString ? dayjs(dateString) : undefined;
+  };
+
 
 export const daysUntil = (dateString: Date) => {
     const today = new Date(); // Get today's date
