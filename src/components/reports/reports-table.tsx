@@ -19,15 +19,15 @@ export const ReportsTable = () => {
         pagination: {
             pageSize: 10,
           },
-          // filters: {
-          //   permanent: [
-          //     {
-          //       field: "relatedEvent",
-          //       operator: "eq",
-          //       value: profileInfo?.data.currentEvent,
-          //     },
-          //   ],
-          // },
+          filters: {
+            permanent: [
+              {
+                field: "relatedEvent",
+                operator: "eq",
+                value: profileInfo?.data.currentEvent,
+              },
+            ],
+          },
     })
 
     const columns: TableColumnsType = [

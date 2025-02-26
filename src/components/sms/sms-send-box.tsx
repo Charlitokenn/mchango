@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {Button, Form, Input, Modal, Space, Statistic, Typography} from 'antd';
 import {SendIcon} from "../icons";
 import {sendDummySMS} from "../../utility/send-sms";
-import {useCreateMany, useNotification} from "@refinedev/core";
+import {useCreateMany, useNotification, useOne} from "@refinedev/core";
 import {messageStats} from "../../utility/message-stats";
 import {supabaseClient} from "../../utility";
 import {DotLottieReact} from "@lottiefiles/dotlottie-react";
@@ -35,6 +35,15 @@ export const SMSBox = ({balance, userId, stateCheck, selectedPledgers, events}: 
     const [messageCount, setMessageCount] = useState<number>(0)
     const [messageBalance, setMessageBalance] = useState<number>(0)
     const [showPurchaseInfo, setShowPurchaseInfo] = useState(false)
+      
+    // Fetch user's current event
+    const { data: currentEventDetails } = useOne({
+        resource: "profiles",
+        id: userId,
+        meta: {
+        select: `currentEvent`,
+        },
+    });
 
     const messagePayload = createMessagePayload(selectedPledgers, events);
     const previewMessage = messagePayload[0]?.message
@@ -93,7 +102,7 @@ export const SMSBox = ({balance, userId, stateCheck, selectedPledgers, events}: 
         // Initialize counters for total messages sent and overall cost
         let totalSentSMS = 0;
         let overallTotalCost = 0;
-        const ATMessageResponseList: { messageId: string; number: string; statusCode: number; status: string; cost: number }[] = [];
+        const ATMessageResponseList: { messageId: string; number: string; statusCode: number; status: string; cost: number; relatedEvent: string }[] = [];
 
         // Use map to collect promises of asynchronous operations
         const sendSMSPromises = messagePayload.map(async (sms) => {
@@ -108,9 +117,14 @@ export const SMSBox = ({balance, userId, stateCheck, selectedPledgers, events}: 
             totalSentSMS += totalMessages;
             overallTotalCost += totalCost;
 
-            // Collect response messages for each sent messsage 
+            // Collect response messages for each sent messsage and append the current event id
             const recipients = response.Recipients || [];
-            ATMessageResponseList.push(...recipients);
+            recipients.forEach((recipient: { messageId: string; number: string; statusCode: number; status: string; cost: number; relatedEvent: string }) => {
+                ATMessageResponseList.push({
+                    ...recipient,
+                    relatedEvent: currentEventDetails?.data.currentEvent // Add current event id
+                });
+            });
         });
     
         // Wait for all promises to resolve
