@@ -2,7 +2,7 @@ import { useTable } from '@refinedev/antd';
 import { useGetIdentity, useOne } from '@refinedev/core';
 import { Table, TableColumnsType, Tag, Tooltip } from 'antd'
 import { formatDateWithTime } from '../../utility/date-formater';
-import { trimText } from '../../utility/propercase';
+import { addSpaceToCamelCase, trimText } from '../../utility/propercase';
 import { SyncOutlined } from '@ant-design/icons';
 
 export const ReportsTable = () => {
@@ -58,7 +58,7 @@ export const ReportsTable = () => {
           title: 'Sent Status',
           dataIndex: 'status',
           key: "status",
-          render: (value) => (<Tag color={value === 'Success' ? "green" : "error"}>{value === "Success" ? "Sent" : "Failed"}</Tag>),
+          render: (value) => (<Tag color={value === 'Success' ? "green" : "error"}>{value === "Success" ? "Sent" : addSpaceToCamelCase(value)}</Tag>),
           align: "center",
       },
         {

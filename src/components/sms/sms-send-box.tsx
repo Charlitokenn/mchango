@@ -169,16 +169,6 @@ export const SMSBox = ({balance, userId, stateCheck, selectedPledgers, events}: 
         >
             <Form.Item label="">
                 <MessageChat sms={previewMessage} state={stateCheck}/>
-                {/* <Paragraph 
-                    // editable={{
-                    //     icon: <HighlightOutlined />,
-                    //     autoSize: true,
-                    //     text: previewMessage
-                    // }}
-                >
-                    <blockquote>Message Preview</blockquote>
-                    <pre hidden={stateCheck ? true : false}>{previewMessage}</pre>
-                </Paragraph> */}                
             </Form.Item>
             <Form.Item name="message-input" hidden>
                 <TextArea
