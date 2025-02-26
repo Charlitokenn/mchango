@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {Button, Form, Input, Modal, Space, Statistic, Typography} from 'antd';
 import {SendIcon} from "../icons";
 import {sendDummySMS} from "../../utility/send-sms";
-import {useNotification} from "@refinedev/core";
+import {useCreateMany, useNotification} from "@refinedev/core";
 import {messageStats} from "../../utility/message-stats";
 import {supabaseClient} from "../../utility";
 import {DotLottieReact} from "@lottiefiles/dotlottie-react";
@@ -47,7 +47,7 @@ export const SMSBox = ({balance, userId, stateCheck, selectedPledgers, events}: 
         
             // Send the SMS and get the response
             const response = await sendDummySMS({ phoneNumbers, message });
-        
+            console.log(response)
             // Calculate stats for this batch of messages
             const stats = messageStats(response);
             
@@ -83,32 +83,47 @@ export const SMSBox = ({balance, userId, stateCheck, selectedPledgers, events}: 
         setOpenModal(true);
     };
 
+    const { mutate: addSentMessagesToSupabase } = useCreateMany({
+        resource: "reports",
+      });
+
     const handleOk = async () => {
         setConfirmModalLoading(true);
 
         // Initialize counters for total messages sent and overall cost
         let totalSentSMS = 0;
         let overallTotalCost = 0;
-    
+        const ATMessageResponseList: { messageId: string; number: string; statusCode: number; status: string; cost: number }[] = [];
+
         // Use map to collect promises of asynchronous operations
         const sendSMSPromises = messagePayload.map(async (sms) => {
             const { phoneNumbers, message } = sms;
-    
+        
             // Send the SMS and get the response
             // TO DO - Update DUMMY Func when going live
             const response = await sendDummySMS({ phoneNumbers, message });
-    
+
             // Calculate stats for this batch of messages and update counters
             const { totalMessages, totalCost } = messageStats(response);
             totalSentSMS += totalMessages;
             overallTotalCost += totalCost;
+
+            // Collect response messages for each sent messsage 
+            const recipients = response.Recipients || [];
+            ATMessageResponseList.push(...recipients);
         });
     
         // Wait for all promises to resolve
         await Promise.all(sendSMSPromises);
-    
+
         // Calculate remaining balance after sending the SMS
         const smsBalance = balance - totalSentSMS;
+
+        // Add sent messages to the database
+        addSentMessagesToSupabase({
+            values: ATMessageResponseList,
+            meta: { notification: false }
+        })
 
         //Update database with new sms amounts
         await supabaseClient

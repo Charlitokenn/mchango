@@ -58,6 +58,7 @@ export const sendDummySMS = async ({phoneNumbers,message}:Props) => {
         }
 
         const data = await response.json();
+        
         return data.SMSMessageData;
     } catch (error) {
         console.error("Error sending SMS:", error);

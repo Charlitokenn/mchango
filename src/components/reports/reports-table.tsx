@@ -1,8 +1,9 @@
 import { useTable } from '@refinedev/antd';
 import { useGetIdentity, useOne } from '@refinedev/core';
 import { Table, TableColumnsType, Tag, Tooltip } from 'antd'
-import { formatDate, formatDateWithTime } from '../../utility/date-formater';
+import { formatDateWithTime } from '../../utility/date-formater';
 import { trimText } from '../../utility/propercase';
+import { SyncOutlined } from '@ant-design/icons';
 
 export const ReportsTable = () => {
     const { data: identity } = useGetIdentity();
@@ -18,15 +19,15 @@ export const ReportsTable = () => {
         pagination: {
             pageSize: 10,
           },
-          filters: {
-            permanent: [
-              {
-                field: "relatedEvent",
-                operator: "eq",
-                value: profileInfo?.data.currentEvent,
-              },
-            ],
-          },
+          // filters: {
+          //   permanent: [
+          //     {
+          //       field: "relatedEvent",
+          //       operator: "eq",
+          //       value: profileInfo?.data.currentEvent,
+          //     },
+          //   ],
+          // },
     })
 
     const columns: TableColumnsType = [
@@ -49,16 +50,29 @@ export const ReportsTable = () => {
         },    
         {
             title: 'To',
-            dataIndex: 'mobile',
-            key: "mobile",
+            dataIndex: 'number',
+            key: "number",
             render: (value: string) => value
         },
         {
-            title: 'Status',
-            dataIndex: 'status',
-            key: "status",
-            render: (value) => (<Tag color={value === 'Success' ? "green" : "error"}>{value === "Success" ? "Delivered" : "Failed"}</Tag>),
-            align: "center"
+          title: 'Sent Status',
+          dataIndex: 'status',
+          key: "status",
+          render: (value) => (<Tag color={value === 'Success' ? "green" : "error"}>{value === "Success" ? "Sent" : "Failed"}</Tag>),
+          align: "center",
+      },
+        {
+            title: 'Delivery Status',
+            dataIndex: 'delivery_status',
+            key: "delivery_status",
+            render: (value) => (
+              <Tag 
+                color={value === 'Success' ? "green" : value === null ? "default" : "error"} 
+                icon={value === null ? <SyncOutlined spin />:""}
+              >
+                {value === "Success" ? "Delivered" : value === null ? "Pending Delivery" : "Failed"}
+              </Tag>),
+            align: "center",
         },
       ];
           

@@ -23,18 +23,6 @@ type EventWrapper = {
   events: Event[];
 };
 
-type Pledgers = {
-  id: number;
-  firstName: string;
-  lastName: string;
-  mobile: string;
-  amount: number;
-  paid: number;
-  balance: number;
-  countryCode: string;
-  relatedEvent: string;
-}[]
-
 export const Home = () => {  
 
   //Get user's current event and all their related events Data

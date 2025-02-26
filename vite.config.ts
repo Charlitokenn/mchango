@@ -20,6 +20,11 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/dummy-sms/, ""),
       },
+      "/delivery-sms": {
+        target: "https://vreogldrrtaobqvmttzp.supabase.co/functions/v1/delivery-reports",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/delivery-sms/, ""),
+      },
     },
   },
 
