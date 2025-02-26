@@ -24,16 +24,16 @@ serve(async (req) => {
             .from("reports")
             .upsert([
                 {
-                    // id: body.id,
-                    status: body.status,
+                    messageId: body.id,
+                    delivery_status: body.status,
                     mobile: body.phoneNumber,
                     network_code: body.networkCode,
                     failure_reason: body.failureReason || null,
                     retry_count: Number(body.retryCount) || 0,
-                    message_id: body.messageId,
+                    // message_id: body.messageId,
                     received_at: new Date().toISOString(), // Store timestamp
                 }
-            ], { onConflict: "id" });
+            ], { onConflict: "messageId" });
 
         if (error) throw error;
 
