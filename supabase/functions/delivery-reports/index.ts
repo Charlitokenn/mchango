@@ -1,45 +1,56 @@
 import { serve } from "https://deno.land/std@0.192.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 
-
 //Redeploy every time you update this edge function
+
+const url = Deno.env.get("SUPABASE_URL") || "";
+const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
+const supabase = createClient(url, key);
+
 serve(async (req) => {
-    try {
-        // Get Supabase environment variables
-        const supabase = createClient(
-            Deno.env.get("SUPABASE_URL") || "",
-            Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "",
-        );
-
-        // Parse the request body
-        const body = await req.json();
-
-        // Ensure required fields exist
-        if (!body.status || !body.phoneNumber) {
-            return new Response(JSON.stringify({ error: "Invalid data" }), { status: 400 });
-        }
-
-        // Insert or update the delivery report in Supabase
-        const { error } = await supabase
-            .from("reports")
-            .upsert([
-                {
-                    messageId: body.id,
-                    delivery_status: body.status,
-                    mobile: body.phoneNumber,
-                    network_code: body.networkCode,
-                    failure_reason: body.failureReason || null,
-                    retry_count: Number(body.retryCount) || 0,
-                    // message_id: body.messageId,
-                    received_at: new Date().toISOString(), // Store timestamp
-                }
-            ], { onConflict: "messageId" });
-
-        if (error) throw error;
-
-        return new Response(JSON.stringify({ success: true }), { status: 200 });
-    } catch (err) {
-        console.error("Error processing delivery report:", (err as Error).message);
-        return new Response(JSON.stringify({ error: "Internal Server Error" }), { status: 500 });
+  try {
+    if (req.method !== "POST") {
+      return new Response("Method Not Allowed", { status: 405 });
     }
+
+    // Read request body as text
+    const bodyText = await req.text();
+
+    // Convert form-urlencoded string to an object
+    const params = new URLSearchParams(bodyText);
+
+    const messageId = params.get("id");
+    const phone_number = params.get("phoneNumber");
+    const status = params.get("status");
+    const network_code = params.get("networkCode");
+    const failure_reason = params.get("failureReason");
+    const retry_count = params.get("retryCount");
+
+    // if (!messageId || !phone_number ) {
+    //   return new Response("Missing required fields", { status: 400 });
+    // }
+
+    // Insert delivery report into Supabase
+    const { error } = await supabase.from("reports").update(
+      {
+        messageId: messageId,
+        number: phone_number,
+        delivery_status: status,
+        network_code: network_code,
+        failure_reason: failure_reason,
+        retry_count: retry_count,
+      }
+    );
+
+    if (error) {
+      console.error("Supabase Insert Error:", error);
+      return new Response(`Error saving data: ${error.message}`, { status: 500 });
+    }
+
+    return new Response("OK", { status: 200 });
+  } catch (error) {
+    console.error("Error processing delivery reports:", error);
+    return new Response("Internal Server Error", { status: 500 });
+  }
 });
+
