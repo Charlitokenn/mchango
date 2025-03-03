@@ -1,7 +1,7 @@
 import { ColumnChart } from "../../components/reports/column-chart"
 import { ReportsTable } from "../../components/reports/reports-table"
 
-export const DeliveryReports = async () => {
+export const DeliveryReports = () => {
   // const formData = new URLSearchParams();
   // formData.append("id", "ATXid_ff169824ab16bb5f8dc675b91495cc4a");
   // formData.append("phoneNumber", "+255745896547");
