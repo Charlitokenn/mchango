@@ -55,25 +55,25 @@ export const ReportsTable = () => {
             render: (value: string) => value
         },
         {
-          title: 'Sent Status',
+          title: 'Status',
           dataIndex: 'status',
           key: "status",
           render: (value) => (<Tag color={value === 'Success' ? "green" : "error"}>{value === "Success" ? "Sent" : addSpaceToCamelCase(value)}</Tag>),
           align: "center",
       },
-        {
-            title: 'Delivery Status',
-            dataIndex: 'delivery_status',
-            key: "delivery_status",
-            render: (value) => (
-              <Tag 
-                color={value === 'Success' ? "green" : value === null ? "default" : "error"} 
-                icon={value === null ? <SyncOutlined spin />:""}
-              >
-                {value === "Success" ? "Delivered" : value === null ? "Pending Delivery" : "Failed"}
-              </Tag>),
-            align: "center",
-        },
+        // {
+        //     title: 'Delivery Status',
+        //     dataIndex: 'delivery_status',
+        //     key: "delivery_status",
+        //     render: (value) => (
+        //       <Tag 
+        //         color={value === 'Success' ? "green" : value === null ? "default" : "error"} 
+        //         icon={value === null ? <SyncOutlined spin />:""}
+        //       >
+        //         {value === "Success" ? "Delivered" : value === null ? "Pending Delivery" : "Failed"}
+        //       </Tag>),
+        //     align: "center",
+        // },
       ];
           
   return (
