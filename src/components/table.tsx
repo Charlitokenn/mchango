@@ -79,7 +79,7 @@ export const MkekaTable = ({balance, userId, events, currentEvent}: { balance: n
     const mkekaPledgers = mkekaList?.data.map((row) => row.id) || [];
 
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-    const [selectedPledgers, setSelectedPledgers] = useState([]);
+    const [selectedPledgers, setSelectedPledgers] = useState<DataType[]>([]);
     const [allPledgers, setAllPledgers] = useState(mkekaPledgers)
     const [wadaiwa, setWadaiwa] = useState(unpaidPledgers)
     const [wamalizaji, setWamalizaji] = useState(paidupPledgers)
