@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {Button, Form, Input, Modal, Space, Statistic, Typography} from 'antd';
 import {SendIcon} from "../icons";
 import {sendDummySMS} from "../../utility/send-sms";
@@ -7,15 +7,14 @@ import {messageStats} from "../../utility/message-stats";
 import {supabaseClient} from "../../utility";
 import {DotLottieReact} from "@lottiefiles/dotlottie-react";
 import {MessageIcon} from "../icons";
-import {AlertOutlined, HighlightOutlined} from "@ant-design/icons";
+import {AlertOutlined} from "@ant-design/icons";
 import {createMessagePayload} from "../../utility/message-payload";
-import { messageTemplates } from '../../constants';
+import { costPerMessage, messageTemplates } from '../../constants';
 import MessageChat from './message-chat';
-import ReactMarkdown from 'react-markdown';
 import MessagePricing from './purchase-sms';
 
 const {TextArea} = Input
-const {Text, Paragraph} = Typography
+const {Text} = Typography
 
 export const SMSBox = ({balance, userId, stateCheck, selectedPledgers, events}: {
     balance: number,
@@ -102,7 +101,7 @@ export const SMSBox = ({balance, userId, stateCheck, selectedPledgers, events}: 
         // Initialize counters for total messages sent and overall cost
         let totalSentSMS = 0;
         let overallTotalCost = 0;
-        const ATMessageResponseList: { messageId: string; number: string; statusCode: number; status: string; cost: number; relatedEvent: string }[] = [];
+        const ATMessageResponseList: { messageId: string; number: string; statusCode: number; status: string; cost: number; relatedEvent: string; message: string; count: number }[] = [];
 
         // Use map to collect promises of asynchronous operations
         const sendSMSPromises = messagePayload.map(async (sms) => {
@@ -117,12 +116,20 @@ export const SMSBox = ({balance, userId, stateCheck, selectedPledgers, events}: 
             totalSentSMS += totalMessages;
             overallTotalCost += totalCost;
 
-            // Collect response messages for each sent messsage and append the current event id
+            // Collect response messages for each sent message and append the current event id and message text
             const recipients = response.Recipients || [];
-            recipients.forEach((recipient: { messageId: string; number: string; statusCode: number; status: string; cost: number; relatedEvent: string }) => {
+            recipients.forEach((recipient: { messageId: string; number: string; statusCode: number; status: string; cost: string; relatedEvent: string }) => {
+                const costNumber = parseFloat(recipient.cost.replace('TZS ', ''));
+                const messagesSent = costNumber / costPerMessage;
                 ATMessageResponseList.push({
-                    ...recipient,
-                    relatedEvent: currentEventDetails?.data.currentEvent // Add current event id
+                    messageId: recipient.messageId,
+                    number: recipient.number,
+                    statusCode: recipient.statusCode,
+                    status: recipient.status,
+                    cost: costNumber, // Convert cost to number
+                    relatedEvent: currentEventDetails?.data.currentEvent, // Add current event id
+                    message: message, // Add the corresponding message text
+                    count: messagesSent // Add the calculated number of messages sent
                 });
             });
         });
