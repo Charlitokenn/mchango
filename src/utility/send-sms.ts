@@ -36,7 +36,7 @@ export const sendSMS = async ({phoneNumbers,message}:Props) => {
 
 export const sendDummySMS = async ({phoneNumbers,message}:Props) => {
     const payload = new URLSearchParams({
-        username: import.meta.env.VITE_AT_DUMMY_USERNAME,
+        username: import.meta.env.VITE_AT_SANDBOX_USERNAME,
         to: phoneNumbers,
         message: message
     });
@@ -47,7 +47,7 @@ export const sendDummySMS = async ({phoneNumbers,message}:Props) => {
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/x-www-form-urlencoded",
-                "apiKey": import.meta.env.VITE_AT_API_KEY,
+                "apiKey": import.meta.env.VITE_AT_SANDBOX_API_KEY,
             },
             body: payload.toString(),
         });
@@ -69,7 +69,7 @@ export const sendDummySMS = async ({phoneNumbers,message}:Props) => {
 
 export const verifyMobileNumber = async ({phoneNumbers,message}:Props) => {
     const payload = new URLSearchParams({
-        username: import.meta.env.VITE_AT_DUMMY_USERNAME,
+        username: import.meta.env.VITE_AT_SANDBOX_USERNAME,
         to: phoneNumbers,
         message: message
     });
@@ -80,7 +80,7 @@ export const verifyMobileNumber = async ({phoneNumbers,message}:Props) => {
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/x-www-form-urlencoded",
-                "apiKey": import.meta.env.VITE_AT_API_KEY,
+                "apiKey": import.meta.env.VITE_AT_SANDBOX_API_KEY,
             },
             body: payload.toString(),
         });

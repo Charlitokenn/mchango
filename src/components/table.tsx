@@ -51,7 +51,7 @@ const columns: TableColumnsType<DataType> = [
 ];
 
 export const MkekaTable = ({balance, userId, events, currentEvent}: { balance: number, userId: string, events: any, currentEvent: string }) => {
-    const {data: mkekaList} = useList({
+    const {data: mkekaList, isLoading: mkekaLoading} = useList({
         resource: "mkeka",
         meta: {
             select: `id,firstName,lastName,countryCode,mobile,amount,paid,balance`
@@ -181,6 +181,7 @@ export const MkekaTable = ({balance, userId, events, currentEvent}: { balance: n
                 <Table<DataType>
                     rowKey="id"
                     virtual={true}
+                    loading={mkekaLoading}
                     scroll={{x: 1, y: 400}}
                     pagination={false}
                     rowSelection={rowSelection}

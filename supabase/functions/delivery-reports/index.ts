@@ -20,27 +20,21 @@ serve(async (req) => {
     const params = new URLSearchParams(bodyText);
 
     const messageId = params.get("id");
-    const phone_number = params.get("phoneNumber");
     const status = params.get("status");
     const network_code = params.get("networkCode");
     const failure_reason = params.get("failureReason");
     const retry_count = params.get("retryCount");
 
-    // if (!messageId || !phone_number ) {
-    //   return new Response("Missing required fields", { status: 400 });
-    // }
-
     // Insert delivery report into Supabase
-    const { error } = await supabase.from("reports").update(
-      {
-        messageId: messageId,
-        number: phone_number,
+    const { error } = await supabase
+      .from('reports')
+      .update({
         delivery_status: status,
         network_code: network_code,
         failure_reason: failure_reason,
-        retry_count: retry_count,
-      }
-    );
+        retry_count: retry_count,      
+      })
+      .eq("messageId", messageId);
 
     if (error) {
       console.error("Supabase Insert Error:", error);
