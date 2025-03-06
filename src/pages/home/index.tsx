@@ -89,7 +89,20 @@ export const Home = () => {
   })
 
   const messageHeader = `Michango ya ${currentEventData?.data?.eventType ? currentEventData.data.eventType : 'harusi'} ya ${currentEventData?.data?.brideGroomNames ? currentEventData.data.brideGroomNames : 'unknown'}.\nUnaweza kupunguza au kumalizia mchango wako kupitia\n${currentEventData?.data?.mobileNet ? currentEventData.data.mobileNet : 'mobile network not provided'}: ${currentEventData?.data?.paymentMobile ? currentEventData.data.paymentMobile : 'payment mobile not provided'} - ${currentEventData?.data?.namePaymentMobile ? currentEventData.data.namePaymentMobile : 'payment mobile name not provided'}\n${currentEventData?.data?.bank ? currentEventData.data.bank : 'bank not provided'}: ${currentEventData?.data?.bankAccountNumber ? currentEventData.data.bankAccountNumber : 'bank account number not provided'} - ${currentEventData?.data?.bankAccountName ? currentEventData.data.bankAccountName : 'bank account name not provided'}\n\n 🅰️ - Ahadi\n ✅ - Amemaliza\n ☑️ - Amepunguza\n\n`;
-  const mkekaMessage = mkekaTextMessage(mkeka?.data)
+  // const mkekaMessage = mkekaTextMessage(mkeka?.data ?? []);
+  const mkekaMessage = mkekaTextMessage(
+    (mkeka?.data ?? []).map((item) => ({
+      id: Number(item.id), // Ensure `id` is a number
+      firstName: item.firstName ?? "", // Provide defaults for missing fields
+      lastName: item.lastName ?? "",
+      mobile: item.mobile ?? "",
+      amount: Number(item.amount ?? 0),
+      paid: Number(item.paid ?? 0),
+      balance: Number(item.balance ?? 0),
+      countryCode: item.countryCode ?? "",
+      relatedEvent: item.relatedEvent ?? "",
+    }))
+  );
 
   const eventObj = currentEvent?.data?.[0] as EventWrapper ?? { currentEvent: '', events: [] };
   

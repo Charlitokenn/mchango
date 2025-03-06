@@ -130,7 +130,7 @@ export const EventForm = ({formProps, saveButtonProps}: Props) => {
                             label="Mobile Number"
                             rules={[{ required: false, message: "Input Mobile Number" }]}
                         >
-                            <Input placeholder="e.g. 0712001002" count={{max: 10, exceedFormatter: (txt, { max }) => runes(txt).slice(0, max).join(''),}}   />
+                            <Input placeholder="e.g. 0712001002" />
                         </Form.Item>  
                     </Col>
                     <Col span={8}>
@@ -170,8 +170,7 @@ export const EventForm = ({formProps, saveButtonProps}: Props) => {
                             rules={[{ required: false, message: "Add Bank Account Number" }]}
                         >
                             <Input 
-                                placeholder="Account Number" 
-                                count={{max: 15, exceedFormatter: (txt, { max }) => runes(txt).slice(0, max).join(''),}}                                
+                                placeholder="Account Number"                              
                             />
                         </Form.Item>  
                     </Col>

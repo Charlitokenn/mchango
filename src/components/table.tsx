@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Col, Row, Table, TableColumnsType} from 'antd';
+import {Col, Row, Table, TableColumnsType, TableProps} from 'antd';
 import {useList} from "@refinedev/core";
 import {currencyNumber} from "../utility/currency-numbers";
 import {SMSBox} from "./sms/sms-send-box";
@@ -76,7 +76,7 @@ export const MkekaTable = ({balance, userId, events, currentEvent}: { balance: n
 
     const unpaidPledgers = mkekaList?.data.filter((row) => row.balance > 0) || [];
     const paidupPledgers = mkekaList?.data.filter((row) => row.balance <= 0) || [];
-    const mkekaPledgers = mkekaList?.data.map((row) => row.id) || [];
+    const mkekaPledgers = (mkekaList?.data ?? []).map((row) => row.id);
 
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
     const [selectedPledgers, setSelectedPledgers] = useState<DataType[]>([]);
@@ -91,10 +91,11 @@ export const MkekaTable = ({balance, userId, events, currentEvent}: { balance: n
     const isThereSelectedPledger = isSelectedPledgersEmpty(selectedPledgers);
 
     // Row selection configuration
-    const rowSelection = {
+    const rowSelection: TableProps<DataType>['rowSelection'] = {
         type: "checkbox",
         columnWidth: 48,
-        selectedRowKeys, // Tracks selected row keys
+        // selectedRowKeys, // Tracks selected row keys
+        selectedRowKeys: selectedPledgers.map((item) => item.id),
         onChange: (newSelectedRowKeys: React.Key[], newSelectedRows: DataType[]) => {
             // Update `selectedRowKeys`
             setSelectedRowKeys(newSelectedRowKeys);
@@ -122,13 +123,14 @@ export const MkekaTable = ({balance, userId, events, currentEvent}: { balance: n
                 text: "Wadaiwa Ahadi",
                 onSelect: () => {
                     const keysToSelect = mkekaList?.data
-                        .filter((row) => row.balance > 0)
-                        .map((row) => row.id) || [];
-                    //FIX ME
+                    .filter((row) => row.balance > 0)
+                    .map((row) => row.id)
+                    .filter(Boolean) as React.Key[];
+                  
                     setSelectedRowKeys(keysToSelect);
 
                     // Select rows where balance > 0
-                    const rowsToSelect = mkekaList?.data.filter((row) => row.balance > 0) || [];
+                    const rowsToSelect = mkekaList?.data.filter((row) => row.balance > 0) as DataType[];
 
                     setWadaiwa(rowsToSelect);
 
@@ -148,13 +150,16 @@ export const MkekaTable = ({balance, userId, events, currentEvent}: { balance: n
                 text: "Wamaliza Ahadi",
                 onSelect: () => {
                     const keysToSelect = mkekaList?.data
-                        .filter((row) => row.balance <= 0)
-                        .map((row) => row.id) || [];
+                    .filter((row) => row.balance <= 0)
+                    .map((row) => row.id)
+                    .filter(Boolean) as React.Key[];
+
                     //FIX ME
                     setSelectedRowKeys(keysToSelect);
 
                     // Select rows where balance <= 0
-                    const rowsToSelect = mkekaList?.data.filter((row) => row.balance <= 0) || [];
+
+                    const rowsToSelect = mkekaList?.data.filter((row) => row.balance <= 0) as DataType[];
 
                     setWamalizaji(rowsToSelect);
 
@@ -186,7 +191,7 @@ export const MkekaTable = ({balance, userId, events, currentEvent}: { balance: n
                     pagination={false}
                     rowSelection={rowSelection}
                     columns={columns}
-                    dataSource={mkekaList?.data as DataType[] | []}
+                    dataSource={mkekaList?.data as DataType[]}
                     size={"small"}
                     summary={(pageData) => {
                         let totalPledges = 0;

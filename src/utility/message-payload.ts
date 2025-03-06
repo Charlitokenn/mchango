@@ -25,7 +25,7 @@ type Event = {
     paymentMobile: string
 }
 
-type MessagePayload = { phoneNumbers: string; message: string }[];
+type MessagePayload = { phoneNumbers: string[]; message: string }[];
 
 export const createMessagePayload = (selectedPledgers: Pledger[], events: Event): MessagePayload => {
     const template = messageTemplates[2].value
@@ -49,11 +49,11 @@ export const createMessagePayload = (selectedPledgers: Pledger[], events: Event)
             .replace("{bankName}", bankAccountName)
             .replace("{mobileNumber}", paymentMobile)
             .replace("{mobileName}", namePaymentMobile)
-            .replace("{daysToEvent}", daysUntil(eventDate))
+            .replace("{daysToEvent}", daysUntil(eventDate).toString());
 
         // Combine country code and mobile to form a full phone number
         //FIX ME - Deal with this typescript error
-        const phoneNumbers: string = [`${countryCode || ""}${mobile}`];
+        const phoneNumbers: string[] = [`${countryCode || ""}${mobile}`];
 
         return {phoneNumbers, message};
     });

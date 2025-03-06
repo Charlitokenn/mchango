@@ -37,15 +37,19 @@ export const formatDateWithTime = (dateString?: string | Date) => {
     });
 };
 
-export const daysUntil = (dateString: Date) => {
+export const daysUntil = (dateInput: string | Date) => {
     const today = new Date(); // Get today's date
-    const targetDate = new Date(dateString); // Convert the provided date string to a Date object
-    
+    const targetDate = new Date(dateInput); // Ensure it's a Date object
+
+    if (isNaN(targetDate.getTime())) {
+        throw new Error("Invalid date input"); // Handle invalid dates
+    }
+
     // Calculate the difference in milliseconds
-    const timeDifference = targetDate - today;
-    
+    const timeDifference = targetDate.getTime() - today.getTime();
+
     // Convert the time difference from milliseconds to days
-    const daysDifference = Math.ceil(timeDifference / (1000 * 3600 * 24)); // 1000ms * 3600s * 24h
-    
+    const daysDifference = Math.ceil(timeDifference / (1000 * 3600 * 24));
+
     return daysDifference;
-}
+};

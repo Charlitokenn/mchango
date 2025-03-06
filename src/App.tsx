@@ -18,7 +18,7 @@ import routerBindings, {
   UnsavedChangesNotifier,
 } from "@refinedev/react-router";
 import { dataProvider, liveProvider } from "@refinedev/supabase";
-import { App as AntdApp, ConfigProvider, Image } from "antd";
+import { App as AntdApp, Image } from "antd";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router";
 import authProvider from "./authProvider";
 import { Header } from "./components/header";
@@ -29,11 +29,9 @@ import { Home } from "./pages/home";
 import { Messaging } from "./pages/sms";
 import { Events } from "./pages/events";
 import { toProperCase } from "./utility/propercase";
-import { customTheme } from "./constants/custom-theme";
 import OnboardingModalWizard from "./components/onboarding/onboarding";
 import * as Sentry from "@sentry/react";
 import { DeliveryReports } from "./pages/delivery-reports";
-import OnboardingPage from "./pages/onboarding";
 
 Sentry.init({
   dsn: "https://60168ce3a70dfef398ac6ff497925739@o4507574821060608.ingest.de.sentry.io/4508874474848336",
@@ -54,7 +52,7 @@ const customTitleHandler = ({ resource, action, params }:{resource?: IResourceIt
   let title = "Mchango App"; // Default title
 
   if (resource && action) {
-      title = `${toProperCase(resource.name)} | Mchango App`;
+      title = `${resource.name === 'sms' ? 'SMS' : toProperCase(resource.name)} | Mchango App`;
       if (params?.id) {
           title += ` - ${params.id}`;
       }
