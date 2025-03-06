@@ -48,30 +48,91 @@ export const SMSBox = ({balance, userId, pledgerSelected, selectedPledgers, even
     const messagePayload = createMessagePayload(selectedPledgers, events);
     const previewMessage = messagePayload[0]?.message
 
-    const showModal = async () => {
-        setIsLoading(true)
+    // const showModal = async () => {
+    //     setIsLoading(true)
         
+    //     const sendSMSPromises = messagePayload.map(async (sms) => {
+    //         const { phoneNumbers, message } = sms;
+        
+    //         // Send the SMS and get the response
+    //         const response = await sendDummySMS({ phoneNumbers, message });
+    //         console.log(response)
+    //         // Calculate stats for this batch of messages
+    //         const stats = messageStats(response);
+            
+    //         // Ensure the returned stats are numbers
+    //         if (isNaN(stats.totalMessages) || isNaN(stats.totalCost)) {
+    //             console.error('Invalid stats:', stats);
+    //             return { totalMessages: 0, totalCost: 0 };  // Return default values if invalid
+    //         }
+        
+    //         return stats;
+    //     });        
+        
+    //     // Wait for all promises to resolve
+    //     const statsArray = await Promise.all(sendSMSPromises);
+
+    //     // Sum up the total messages and cost after all promises have resolved
+    //     const { totalMessages, totalCost } = statsArray.reduce(
+    //         (acc, stats) => {
+    //             acc.totalMessages += Number(stats.totalMessages);
+    //             acc.totalCost += Number(stats.totalCost);
+    //             return acc;
+    //         },
+    //         { totalMessages: 0, totalCost: 0 }
+    //     );   
+
+    //     // Calculate remaining balance after sending the SMS
+    //     const smsBalance = balance - totalMessages;
+
+    //     // Update state once after all calculations
+    //     setIsLoading(false)
+    //     setMessageCount(totalMessages);
+    //     setMessageBalance(smsBalance);
+    //     setOpenModal(true);
+    // };
+
+    const showModal = async () => {
+        setIsLoading(true);
+        
+        // Create an array of promises for each SMS to send individually
         const sendSMSPromises = messagePayload.map(async (sms) => {
             const { phoneNumbers, message } = sms;
-        
-            // Send the SMS and get the response
-            const response = await sendDummySMS({ phoneNumbers, message });
-            console.log(response)
-            // Calculate stats for this batch of messages
-            const stats = messageStats(response);
-            
-            // Ensure the returned stats are numbers
-            if (isNaN(stats.totalMessages) || isNaN(stats.totalCost)) {
-                console.error('Invalid stats:', stats);
-                return { totalMessages: 0, totalCost: 0 };  // Return default values if invalid
-            }
-        
-            return stats;
-        });        
-        
-        // Wait for all promises to resolve
+    
+            // Map over phoneNumbers array and send each SMS individually
+            const sendSingleSMSPromises = phoneNumbers.map(async (phoneNumber) => {
+                const response = await sendDummySMS({ phoneNumbers: phoneNumber, message });
+                console.log(response);
+    
+                // Calculate stats for this batch of messages
+                const stats = messageStats(response);
+                
+                // Ensure the returned stats are numbers
+                if (isNaN(stats.totalMessages) || isNaN(stats.totalCost)) {
+                    console.error('Invalid stats:', stats);
+                    return { totalMessages: 0, totalCost: 0 };  // Return default values if invalid
+                }
+                
+                return stats;
+            });
+    
+            // Wait for all individual SMS promises to resolve
+            const statsArray = await Promise.all(sendSingleSMSPromises);
+    
+            // Sum up the total messages and cost from each SMS
+            return statsArray.reduce(
+                (acc, stats) => {
+                    acc.totalMessages += Number(stats.totalMessages);
+                    acc.totalCost += Number(stats.totalCost);
+                    return acc;
+                },
+                { totalMessages: 0, totalCost: 0 }
+            );
+        });
+    
+        // Wait for all message batch promises to resolve
         const statsArray = await Promise.all(sendSMSPromises);
-
+    
         // Sum up the total messages and cost after all promises have resolved
         const { totalMessages, totalCost } = statsArray.reduce(
             (acc, stats) => {
@@ -80,17 +141,18 @@ export const SMSBox = ({balance, userId, pledgerSelected, selectedPledgers, even
                 return acc;
             },
             { totalMessages: 0, totalCost: 0 }
-        );   
-
+        );
+    
         // Calculate remaining balance after sending the SMS
         const smsBalance = balance - totalMessages;
-
+    
         // Update state once after all calculations
-        setIsLoading(false)
+        setIsLoading(false);
         setMessageCount(totalMessages);
         setMessageBalance(smsBalance);
         setOpenModal(true);
     };
+    
 
     const { mutate: addSentMessagesToSupabase } = useCreateMany({
         resource: "reports",
@@ -105,35 +167,78 @@ export const SMSBox = ({balance, userId, pledgerSelected, selectedPledgers, even
         const ATMessageResponseList: { messageId: string; number: string; statusCode: number; status: string; cost: number; relatedEvent: string; message: string; count: number }[] = [];
 
         // Use map to collect promises of asynchronous operations
+        // const sendSMSPromises = messagePayload.map(async (sms) => {
+        //     const { phoneNumbers, message } = sms;
+        
+        //     // Send the SMS and get the response
+        //     // TO DO - Update DUMMY Func when going live
+        //     const response = await sendDummySMS({ phoneNumbers, message });
+
+        //     // Calculate stats for this batch of messages and update counters
+        //     const { totalMessages, totalCost } = messageStats(response);
+        //     totalSentSMS += totalMessages;
+        //     overallTotalCost += totalCost;
+
+        //     // Collect response messages for each sent message and append the current event id and message text
+        //     const recipients = response.Recipients || [];
+        //     recipients.forEach((recipient: { messageId: string; number: string; statusCode: number; status: string; cost: string; relatedEvent: string }) => {
+        //         const costNumber = parseFloat(recipient.cost.replace('TZS ', ''));
+        //         const messagesSent = costNumber / costPerMessage;
+        //         ATMessageResponseList.push({
+        //             messageId: recipient.messageId,
+        //             number: recipient.number,
+        //             statusCode: recipient.statusCode,
+        //             status: recipient.status,
+        //             cost: costNumber, // Convert cost to number
+        //             relatedEvent: currentEventDetails?.data.currentEvent, // Add current event id
+        //             message: message, // Add the corresponding message text
+        //             count: messagesSent // Add the calculated number of messages sent
+        //         });
+        //     });
+        // });
+
         const sendSMSPromises = messagePayload.map(async (sms) => {
             const { phoneNumbers, message } = sms;
         
-            // Send the SMS and get the response
-            // TO DO - Update DUMMY Func when going live
-            const response = await sendDummySMS({ phoneNumbers, message });
-
-            // Calculate stats for this batch of messages and update counters
-            const { totalMessages, totalCost } = messageStats(response);
-            totalSentSMS += totalMessages;
-            overallTotalCost += totalCost;
-
-            // Collect response messages for each sent message and append the current event id and message text
-            const recipients = response.Recipients || [];
-            recipients.forEach((recipient: { messageId: string; number: string; statusCode: number; status: string; cost: string; relatedEvent: string }) => {
-                const costNumber = parseFloat(recipient.cost.replace('TZS ', ''));
-                const messagesSent = costNumber / costPerMessage;
-                ATMessageResponseList.push({
-                    messageId: recipient.messageId,
-                    number: recipient.number,
-                    statusCode: recipient.statusCode,
-                    status: recipient.status,
-                    cost: costNumber, // Convert cost to number
-                    relatedEvent: currentEventDetails?.data.currentEvent, // Add current event id
-                    message: message, // Add the corresponding message text
-                    count: messagesSent // Add the calculated number of messages sent
+            // Create an array of promises to send SMS to each individual phone number
+            const sendSingleSMSPromises = phoneNumbers.map(async (phoneNumber) => {
+                // Send the SMS and get the response for each phone number
+                const response = await sendDummySMS({ phoneNumbers: phoneNumber, message });
+        
+                // Calculate stats for this batch of messages and update counters
+                const { totalMessages, totalCost } = messageStats(response);
+                totalSentSMS += totalMessages;
+                overallTotalCost += totalCost;
+        
+                // Collect response messages for each sent message and append the current event id and message text
+                const recipients = response.Recipients || [];
+                recipients.forEach((recipient: {
+                    messageId: string;
+                    number: string;
+                    statusCode: number;
+                    status: string;
+                    cost: string;
+                    relatedEvent: string;
+                }) => {
+                    const costNumber = parseFloat(recipient.cost.replace('TZS ', ''));
+                    const messagesSent = costNumber / costPerMessage;
+                    ATMessageResponseList.push({
+                        messageId: recipient.messageId,
+                        number: recipient.number,
+                        statusCode: recipient.statusCode,
+                        status: recipient.status,
+                        cost: costNumber, // Convert cost to number
+                        relatedEvent: currentEventDetails?.data.currentEvent, // Add current event id
+                        message: message, // Add the corresponding message text
+                        count: messagesSent // Add the calculated number of messages sent
+                    });
                 });
             });
+        
+            // Wait for all individual SMS to be sent and processed
+            await Promise.all(sendSingleSMSPromises);
         });
+        
     
         // Wait for all promises to resolve
         await Promise.all(sendSMSPromises);

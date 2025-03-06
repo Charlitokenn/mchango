@@ -124,8 +124,8 @@ function App() {
                             type="login"
                             formProps={{
                               initialValues: {
-                                email: "test@gmail.com",
-                                password: "12345678",
+                                email: "",
+                                password: "",
                               },
                             }}
                           />
