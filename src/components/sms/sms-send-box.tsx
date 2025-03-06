@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {Button, Form, Input, Modal, Space, Statistic, Typography} from 'antd';
+import {Button, Form, Input, Modal, Space, Statistic, Switch, Typography} from 'antd';
 import {SendIcon} from "../icons";
 import {sendDummySMS} from "../../utility/send-sms";
 import {useCreateMany, useNotification, useOne} from "@refinedev/core";
@@ -16,10 +16,10 @@ import MessagePricing from './purchase-sms';
 const {TextArea} = Input
 const {Text} = Typography
 
-export const SMSBox = ({balance, userId, stateCheck, selectedPledgers, events}: {
+export const SMSBox = ({balance, userId, pledgerSelected, selectedPledgers, events}: {
     balance: number,
     userId: string,
-    stateCheck: boolean,
+    pledgerSelected: boolean,
     selectedPledgers: any
     events: any
 }) => {
@@ -34,6 +34,7 @@ export const SMSBox = ({balance, userId, stateCheck, selectedPledgers, events}: 
     const [messageCount, setMessageCount] = useState<number>(0)
     const [messageBalance, setMessageBalance] = useState<number>(0)
     const [showPurchaseInfo, setShowPurchaseInfo] = useState(false)
+    const [showCustomMessageInput, setShowCustomMessageInput] = useState(false)
       
     // Fetch user's current event
     const { data: currentEventDetails } = useOne({
@@ -175,7 +176,14 @@ export const SMSBox = ({balance, userId, stateCheck, selectedPledgers, events}: 
             onFinish={showModal}
         >
             <Form.Item label="">
-                <MessageChat sms={previewMessage} state={stateCheck}/>
+                <MessageChat sms={previewMessage} state={pledgerSelected} isCustomMessage={showCustomMessageInput}/>
+                <Switch
+                    checkedChildren="Write Own Message"
+                    unCheckedChildren="Prefiled Message"
+                    value={showCustomMessageInput}
+                    size='small'
+                    onChange={() => { showCustomMessageInput === true ? setShowCustomMessageInput(false) : setShowCustomMessageInput(true) }}
+                />                
             </Form.Item>
             <Form.Item name="message-input" hidden>
                 <TextArea
@@ -198,7 +206,14 @@ export const SMSBox = ({balance, userId, stateCheck, selectedPledgers, events}: 
             </Form.Item>
 
             <Form.Item>
-                <Button type="primary" icon={<SendIcon/>} htmlType="submit" loading={isLoading} disabled={stateCheck}>{isLoading ? 'Calculating SMS': 'Send SMS'}</Button>
+                <Button 
+                    type="primary" 
+                    icon={<SendIcon/>}
+                    htmlType="submit" 
+                    loading={isLoading} 
+                    disabled={pledgerSelected} 
+                    hidden={showCustomMessageInput}
+                >{isLoading ? 'Calculating SMS': 'Send SMS'}</Button>
             </Form.Item>
         </Form>
             <Modal

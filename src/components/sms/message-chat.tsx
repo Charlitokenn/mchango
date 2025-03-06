@@ -1,8 +1,11 @@
 import { ArrowLeft, ChevronRight } from 'lucide-react';
+import { useMemo, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 
-const MessageChat = ({sms,state}: {sms: string, state: boolean}) => {
+const MessageChat = ({sms,state,isCustomMessage}: {sms: string, state: boolean, isCustomMessage: boolean}) => {
   const formattedSMS = sms?.replace(/\n/g, "  \n");
+  const [inputText, setInputText] = useState('');
+  const formattedInputText = useMemo(() => inputText.replace(/\n/g, "  \n"), [inputText]);
 
   return (
     <div 
@@ -58,19 +61,41 @@ const MessageChat = ({sms,state}: {sms: string, state: boolean}) => {
           borderRadius: '12px',
           maxWidth: '80%',
           margin: '8px 0'
-        }}>
+        }}
+        hidden={state ? true : false}>
           <p style={{
             margin: 0,
             fontSize: '16px',
             lineHeight: '1.5'
           }}
-            hidden={state ? true : false}
+            
           >
             <ReactMarkdown>
              {formattedSMS}
             </ReactMarkdown>
           </p>
         </div>
+        {/* Div for Custom Message */}
+        <div style={{
+          backgroundColor: '#e9e9e9',
+          padding: '16px',
+          borderRadius: '12px',
+          maxWidth: '80%',
+          margin: '8px 0'
+        }}
+        hidden={isCustomMessage}>
+          {formattedInputText && (
+            <p style={{
+              margin: 0,
+              fontSize: '16px',
+              lineHeight: '1.5'
+            }}>
+              <ReactMarkdown>
+                {formattedInputText}
+              </ReactMarkdown>
+            </p>
+          )}
+        </div>        
       </div>
 
       {/* Message Input */}
@@ -78,31 +103,44 @@ const MessageChat = ({sms,state}: {sms: string, state: boolean}) => {
         padding: '16px',
         borderTop: '1px solid #eee',
         backgroundColor: 'white'
-      }}>
+      }}
+      >
         <div
           style={{
-          display: 'flex',
-          alignItems: 'center',
-          backgroundColor: '#f5f5f5',
-          borderRadius: '24px',
-          padding: '8px 16px'
-         }}
-         hidden
+            display: 'flex',
+            alignItems: 'center',
+            backgroundColor: '#f5f5f5',
+            borderRadius: '24px',
+            padding: '8px 16px',
+            flexDirection: 'column'
+          }}
+          hidden={!isCustomMessage}
         >
-          <input
-            type="text"
+          <textarea
             placeholder="Type message"
             style={{
               border: 'none',
               outline: 'none',
               backgroundColor: 'transparent',
               flex: 1,
-              fontSize: '16px'
+              fontSize: '16px',
+              width: '100%',
+              resize: 'none',
+              overflow: 'hidden'
+            }}
+            value={inputText}
+            onChange={(e) => setInputText(e.target.value)}
+            onInput={(e) => {
+              const target = e.target as HTMLTextAreaElement;
+              target.style.height = 'auto';
+              target.style.height = `${target.scrollHeight}px`;
             }}
           />
           <ChevronRight style={{
             color: '#666',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            alignSelf: 'flex-end',
+            marginTop: '8px',
           }} />
         </div>
       </div>

@@ -3,7 +3,6 @@ import { useGetIdentity, useOne } from '@refinedev/core';
 import { Table, TableColumnsType, Tag, Tooltip } from 'antd'
 import { formatDateWithTime } from '../../utility/date-formater';
 import { addSpaceToCamelCase, trimText } from '../../utility/propercase';
-import { SyncOutlined } from '@ant-design/icons';
 
 export const ReportsTable = () => {
     const { data: identity } = useGetIdentity();

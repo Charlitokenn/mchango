@@ -33,6 +33,7 @@ import { customTheme } from "./constants/custom-theme";
 import OnboardingModalWizard from "./components/onboarding/onboarding";
 import * as Sentry from "@sentry/react";
 import { DeliveryReports } from "./pages/delivery-reports";
+import OnboardingPage from "./pages/onboarding";
 
 Sentry.init({
   dsn: "https://60168ce3a70dfef398ac6ff497925739@o4507574821060608.ingest.de.sentry.io/4508874474848336",

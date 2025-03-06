@@ -69,7 +69,7 @@ export const Events = () => {
             },
             successNotification: () => {           
                 return {
-                  message: `Current Event has been updated`,
+                  message: `Current Event has been selected`,
                   description: "Success",
                   type: "success",
                 };
@@ -98,7 +98,7 @@ export const Events = () => {
             <Row gutter={[32, 32]}>
                 <Col xs={24} sm={24} xl={12} style={{ height: "100%" }}>
                 <div style={{display: "flex"}}>
-                    <span style={{fontWeight: "bold"}}>Current Event: </span>
+                    <span style={{fontWeight: "bold", marginRight: "1.5rem"}}>Event:</span>
                     <Select options={events} style={{width: "100%"}} placeholder="Select Event" onChange={(value) => handleEventChange(value)}/>
                 </div>
                     <DotLottieReact

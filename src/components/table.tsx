@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Button, Col, Row, Table, TableColumnsType} from 'antd';
+import {Col, Row, Table, TableColumnsType} from 'antd';
 import {useList} from "@refinedev/core";
 import {currencyNumber} from "../utility/currency-numbers";
 import {SMSBox} from "./sms/sms-send-box";
@@ -88,7 +88,7 @@ export const MkekaTable = ({balance, userId, events, currentEvent}: { balance: n
         return selectedPledgers.length === 0;
     };
 
-    const stateCheck = isSelectedPledgersEmpty(selectedPledgers);
+    const isThereSelectedPledger = isSelectedPledgersEmpty(selectedPledgers);
 
     // Row selection configuration
     const rowSelection = {
@@ -174,7 +174,7 @@ export const MkekaTable = ({balance, userId, events, currentEvent}: { balance: n
         <Row gutter={[32, 32]} style={{marginTop: "18px"}}>
             {/* SMSBox: takes full width on mobile devices, 1/4 on large devices */}
             <Col xs={24} sm={24} xl={6} style={{height: "100%"}}>
-                <SMSBox balance={balance} userId={userId} stateCheck={stateCheck} selectedPledgers={selectedPledgers} events={events}/>
+                <SMSBox balance={balance} userId={userId} pledgerSelected={isThereSelectedPledger} selectedPledgers={selectedPledgers} events={events}/>
             </Col>
             {/* MkekaTable: takes full width on mobile devices, 3/4 on large devices */}
             <Col xs={24} sm={24} xl={18} style={{height: "100%"}}>
@@ -200,7 +200,7 @@ export const MkekaTable = ({balance, userId, events, currentEvent}: { balance: n
                         return (
                             <Table.Summary fixed>
                                 <Table.Summary.Row>
-                                    <Table.Summary.Cell index={0} colSpan={2}>Grand Totals</Table.Summary.Cell>
+                                    <Table.Summary.Cell index={0} colSpan={3}>Grand Totals</Table.Summary.Cell>
                                     <Table.Summary.Cell index={1}>
                                         {currencyNumber(totalPledges)}
                                     </Table.Summary.Cell>
