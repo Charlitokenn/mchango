@@ -12,7 +12,7 @@ export const sendSMS = async ({phoneNumbers,message}:Props) => {
     });
 
     try {
-        const response = await fetch("/send-sms", {
+        const response = await fetch(import.meta.env.VITE_AT_ENDPOINT, {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -42,7 +42,7 @@ export const sendDummySMS = async ({phoneNumbers,message}:Props) => {
     });
 
     try {
-        const response = await fetch("/dummy-sms", {
+        const response = await fetch(import.meta.env.VITE_AT_SANDBOX_ENDPOINT, {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -75,7 +75,7 @@ export const verifyMobileNumber = async ({phoneNumbers,message}:Props) => {
     });
 
     try {
-        const response = await fetch("/dummy-sms", {
+        const response = await fetch(import.meta.env.VITE_AT_SANDBOX_ENDPOINT, {
             method: "POST",
             headers: {
                 "Accept": "application/json",
